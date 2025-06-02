@@ -7,7 +7,7 @@ environment variable support and validation.
 
 from pathlib import Path
 from typing import Optional
-from pydantic import Field, field_validator, ConfigDict
+from pydantic import Field, field_validator, ConfigDict, SecretStr
 from pydantic_settings import BaseSettings
 
 
@@ -42,6 +42,27 @@ class AppConfig(BaseSettings):
     debug_mode: bool = Field(
         default=False,
         description="Enable debug mode for additional logging"
+    )
+    
+    openai_api_key: Optional[SecretStr] = Field(
+        default=None,
+        description="OpenAI API key for generating flashcards"
+    )
+    
+    # Flashcard generation settings
+    generate_flashcards: bool = Field(
+        default=True,
+        description="Whether to generate flashcards from chapters"
+    )
+    
+    flashcards_per_chapter: int = Field(
+        default=5,
+        description="Target number of flashcards to generate per chapter"
+    )
+    
+    flashcard_output_format: str = Field(
+        default="json",
+        description="Output format for flashcards (json, csv, anki)"
     )
     
     @field_validator('output_folder')
