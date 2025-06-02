@@ -65,13 +65,12 @@ class FlashcardPersistenceService:
             },
             "flashcards": [
                 {
-                    "id": card.id,
-                    "question": card.question,
-                    "answer": card.answer,
-                    "chapter_title": card.chapter_title,
+                    "front": card.front,
+                    "back": card.back,
+                    "card_type": card.card_type,
+                    "source": card.source,
                     "difficulty": card.difficulty,
-                    "tags": card.tags,
-                    "created_at": card.created_at.isoformat() if card.created_at else None
+                    "tags": card.tags
                 }
                 for card in flashcards
             ]
@@ -101,7 +100,7 @@ class FlashcardPersistenceService:
         filepath = self.output_folder / filename
         
         # Define CSV headers
-        headers = ['id', 'question', 'answer', 'chapter_title', 'difficulty', 'tags', 'created_at']
+        headers = ['front', 'back', 'card_type', 'source', 'difficulty', 'tags']
         
         # Save to file
         with open(filepath, 'w', newline='', encoding='utf-8') as f:
@@ -110,13 +109,12 @@ class FlashcardPersistenceService:
             
             for card in flashcards:
                 writer.writerow([
-                    card.id,
-                    card.question,
-                    card.answer,
-                    card.chapter_title,
+                    card.front,
+                    card.back,
+                    card.card_type,
+                    card.source,
                     card.difficulty,
-                    ','.join(card.tags) if card.tags else '',
-                    card.created_at.isoformat() if card.created_at else ''
+                    ','.join(card.tags) if card.tags else ''
                 ])
         
         self.logger.info(f"Saved {len(flashcards)} flashcards to CSV: {filepath}")
@@ -144,14 +142,15 @@ class FlashcardPersistenceService:
                 # Prepare tags including chapter and difficulty
                 tags = list(card.tags) if card.tags else []
                 tags.extend([
-                    f"Chapter:{card.chapter_title}",
-                    f"Difficulty:{card.difficulty}",
+                    f"Source:{card.source}",
+                    f"Difficulty:{card.difficulty}" if card.difficulty else "Difficulty:Unknown",
+                    f"Type:{card.card_type}",
                     f"Book:{book.title}"
                 ])
                 tag_string = ' '.join(tags)
                 
                 # Write in Anki import format
-                f.write(f"{card.question}\t{card.answer}\t{tag_string}\n")
+                f.write(f"{card.front}\t{card.back}\t{tag_string}\n")
         
         self.logger.info(f"Saved {len(flashcards)} flashcards to Anki format: {filepath}")
         return filepath
