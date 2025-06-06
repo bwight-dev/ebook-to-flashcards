@@ -1,7 +1,9 @@
+# filepath: /workspaces/ebook-to-flashcards/requirements.txt
 ebooklib==0.18
-pydantic==2.5.0
-pydantic-settings==2.1.0
+pydantic>=2.10.0
+pydantic-settings>=2.1.0
 beautifulsoup4==4.12.2
 pytest==7.4.3
 pytest-cov==4.1.0
 openai-agents
+PyMuPDF>=1.23.0
